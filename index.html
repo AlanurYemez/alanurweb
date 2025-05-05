@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk Ünlüleri Magazin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        header {
+            background-color: #d81b60;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+        
+        .celebrities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .celebrity-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .celebrity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .celebrity-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .celebrity-info {
+            padding: 1.5rem;
+        }
+        
+        .celebrity-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .celebrity-title {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 999;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .modal-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-name {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-title {
+            color: #d81b60;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-bio {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        @media (max-width: 768px) {
+            .celebrities-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+            
+            .modal-info {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .celebrities-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 3rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+    color: #d81b60;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.submit-btn {
+    background-color: #d81b60;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.submit-btn:hover {
+    background-color: #ad1457;
+}
+
+#form-results {
+    line-height: 1.8;
+}
+
+#form-results .result-item {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+#form-results .result-label {
+    font-weight: bold;
+    color: #d81b60;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Türk Ünlüleri Magazin</h1>
+        <p class="subtitle">En popüler Türk ünlüleri hakkında bilgiler</p>
+    </header>
+    
+    <div class="container">
+        <div class="celebrities-grid">
+            <!-- Ünlü Kart 1 -->
+            <div class="celebrity-card" onclick="openModal('burak-ozcivit')">
+                <img src="resimler/BurakOzcivit.jpg" alt="Burak Özçivit" width="300">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Burak Özçivit</h3>
+                    <p class="celebrity-title">Oyuncu, Model</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 2 -->
+            <div class="celebrity-card" onclick="openModal('kenan-imirzalioglu')">
+                <img src="resimler/Kenan Imirzalioglu.jpg" alt="Kenan İmirzalıoğlu" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Kenan İmirzalıoğlu</h3>
+                    <p class="celebrity-title">Oyuncu</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 2 -->
+            <div class="celebrity-card" onclick="openModal('tarkan')">
+                <img src="resimler/Tarkan.jpg" alt="Tarkan" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Tarkan</h3>
+                    <p class="celebrity-title">Müzisyen</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 3 -->
+            <div class="celebrity-card" onclick="openModal('beren-saat')">
+                <img src="resimler/Beren Saat.jpg" alt="Beren Saat" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Beren Saat</h3>
+                    <p class="celebrity-title">Oyuncu</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 4 -->
+            <div class="celebrity-card" onclick="openModal('murat-boz')">
+                <img src="resimler/Murat Boz.jpg" alt="Murat Boz" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Murat Boz</h3>
+                    <p class="celebrity-title">Şarkıcı</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 5 -->
+            <div class="celebrity-card" onclick="openModal('hande-ercel')">
+                <img src="resimler/Hande Erçel.jpg" alt="Hande Erçel" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Hande Erçel</h3>
+                    <p class="celebrity-title">Oyuncu</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 6 -->
+            <div class="celebrity-card" onclick="openModal('acun-ilicali')">
+                <img src="resimler/Acun Ilıcalı.jpg" alt="Acun Ilıcalı" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Acun Ilıcalı</h3>
+                    <p class="celebrity-title">Televizyon Yapımcısı</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 7 -->
+            <div class="celebrity-card" onclick="openModal('serenay-sarikaya')">
+                <img src="resimler/Serenay Sarikaya.jpg" alt="Serenay Sarıkaya" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Serenay Sarıkaya</h3>
+                    <p class="celebrity-title">Oyuncu, Model</p>
+                </div>
+            </div>
+            
+            <!-- Ünlü Kart 8 -->
+            <div class="celebrity-card" onclick="openModal('can-yaman')">
+                <img src="resimler/Can Yaman.jpg" alt="Can Yaman" width="300" height="450">
+                <div class="celebrity-info">
+                    <h3 class="celebrity-name">Can Yaman</h3>
+                    <p class="celebrity-title">Oyuncu</p>
+                </div>
+            </div>
+        </div>
+        <!-- Form bölümünü buraya ekleyin (container div'in içine, celebrities-grid div'inin altına) -->
+<div class="form-container">
+    <h2>Bizimle İletişime Geçin</h2>
+    <form id="contactForm">
+        <div class="form-group">
+            <label for="firstName">Adınız:</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Soyadınız:</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label>Cinsiyet:</label>
+            <div class="radio-group">
+                <input type="radio" id="male" name="gender" value="Erkek" required>
+                <label for="male">Erkek</label>
+                <input type="radio" id="female" name="gender" value="Kadın">
+                <label for="female">Kadın</label>
+                <input type="radio" id="other" name="gender" value="Diğer">
+                <label for="other">Diğer</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">E-posta:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="favCelebrity">Favori Türk Sanatçısı:</label>
+            <select id="favCelebrity" name="favCelebrity" required>
+                <option value="">Seçiniz</option>
+                <option value="Burak Özçivit">Burak Özçivit</option>
+                <option value="Kenan İmirzalıoğlu">Kenan İmirzalıoğlu</option>
+                <option value="Tarkan">Tarkan</option>
+                <option value="Beren Saat">Beren Saat</option>
+                <option value="Murat Boz">Murat Boz</option>
+                <option value="Hande Erçel">Hande Erçel</option>
+                <option value="Acun Ilıcalı">Acun Ilıcalı</option>
+                <option value="Serenay Sarıkaya">Serenay Sarıkaya</option>
+                <option value="Can Yaman">Can Yaman</option>
+                <option value="other">Diğer</option>
+            </select>
+        </div>
+        <button type="submit" class="submit-btn">Gönder</button>
+    </form>
+</div>
+
+<!-- Form sonuçları modalı -->
+<div id="form-result-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeFormModal()">&times;</span>
+        <h2>Form Bilgileriniz</h2>
+        <div id="form-results"></div>
+    </div>
+</div>
+
+    </div>
+    
+    <!-- Modal Penceresi -->
+    <div id="celebrity-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <img id="modal-image" src="" alt="" class="modal-image">
+            <h2 id="modal-name" class="modal-name"></h2>
+            <p id="modal-title" class="modal-title"></p>
+            <p id="modal-bio" class="modal-bio"></p>
+            <div id="modal-info" class="modal-info">
+                <!-- Bilgiler burada dinamik olarak gösterilecek -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Ünlü bilgilerini depolama
+        const celebrities = {
+            'burak-ozcivit': {
+                name: 'Burak Özçivit',
+                title: 'Oyuncu, Model',
+                image: '/api/placeholder/800/500',
+                bio: 'Burak Özçivit, 24 Aralık 1984 tarihinde İstanbul\'da doğdu. 2003 yılında Best Model of Turkey yarışmasında birinci olduktan sonra modellik kariyerine başladı. "Çalıkuşu", "Muhteşem Yüzyıl: Kösem", "Kuruluş Osman" gibi dizilerde rol aldı. Uluslararası alanda da tanınan bir Türk aktör ve modeldir.',
+                info: {
+                    'Doğum Tarihi': '24 Aralık 1984',
+                    'Doğum Yeri': 'İstanbul',
+                    'Meslek': 'Oyuncu, Model',
+                    'Eşi': 'Fahriye Evcen',
+                    'Çocukları': 'Karan Özçivit, Kerem Özçivit',
+                    'Eğitim': 'Marmara Üniversitesi, Güzel Sanatlar Fakültesi, Fotoğrafçılık Bölümü',
+                    'Boyu': '1.84 m',
+                    'Önemli Projeler': 'Çalıkuşu, Muhteşem Yüzyıl: Kösem, Kuruluş Osman, Kara Sevda'
+                }
+            },
+            'kenan-imirzalioglu': {
+                name: 'Kenan İmirzalıoğlu',
+                title: 'Oyuncu, Eski Manken',
+                image: '/api/placeholder/800/500',
+                bio: 'Kenan İmirzalıoğlu, 1974 yılında Ankara\'da doğdu. Best Model of Turkey ve Best Model of the World yarışmalarını kazandıktan sonra oyunculuk kariyerine başladı. "Deli Yürek", "Ezel" ve "Karadayı" gibi dizilerde başrol oynadı. Türk televizyon ve sinema dünyasının en tanınmış aktörlerinden biridir.',
+                info: {
+                    'Doğum Tarihi': '17 Haziran 1974',
+                    'Doğum Yeri': 'Ankara',
+                    'Meslek': 'Oyuncu, Eski Manken',
+                    'Eşi': 'Sinem Kobal',
+                    'Çocukları': 'Lalin İmirzalıoğlu',
+                    'Eğitim': 'Yıldız Teknik Üniversitesi, Matematik Bölümü',
+                    'Boyu': '1.90 m',
+                    'Önemli Projeler': 'Deli Yürek, Ezel, Karadayı'
+                }
+            },
+            'tarkan': {
+                name: 'Tarkan',
+                title: 'Şarkıcı, Besteci',
+                image: '/api/placeholder/800/500',
+                bio: 'Tarkan Tevetoğlu, 17 Ekim 1972\'de Almanya\'da doğdu. Türk pop müziğinin uluslararası alanda en tanınan isimlerinden biridir. "Şımarık", "Dudu" gibi hit şarkılarıyla dünya çapında tanınmıştır. "Megastar" olarak anılmaktadır ve Türk müzik tarihinin en çok satan sanatçılarından biridir.',
+                info: {
+                    'Doğum Tarihi': '17 Ekim 1972',
+                    'Doğum Yeri': 'Alzey, Almanya',
+                    'Meslek': 'Şarkıcı, Besteci',
+                    'Eşi': 'Pınar Dilek',
+                    'Çocukları': 'Liya Tevetoğlu',
+                    'Albümler': 'Yine Sensiz, Aacayipsin, Ölürüm Sana, Karma, Dudu, Metamorfoz',
+                    'Önemli Şarkıları': 'Şımarık, Kuzu Kuzu, Dudu, Simarik',
+                    'Müzik Tarzı': 'Pop, Dance, R&B'
+                }
+            },
+            'beren-saat': {
+                name: 'Beren Saat',
+                title: 'Oyuncu',
+                image: '/api/placeholder/800/500',
+                bio: 'Beren Saat, 26 Şubat 1984 tarihinde Ankara\'da doğdu. "Aşk-ı Memnu", "Fatih Harbiye" ve "Muhteşem Yüzyıl: Kösem" gibi dizilerde rol aldı. Uluslararası alanda da tanınan başarılı bir Türk oyuncudur. Netflix\'in ilk Türk dizisi olan "Atiye" ile global izleyicilere ulaştı.',
+                info: {
+                    'Doğum Tarihi': '26 Şubat 1984',
+                    'Doğum Yeri': 'Ankara',
+                    'Meslek': 'Oyuncu',
+                    'Eşi': 'Kenan Doğulu',
+                    'Eğitim': 'Başkent Üniversitesi, Tiyatro Bölümü (yarım kalmış)',
+                    'Önemli Projeler': 'Aşk-ı Memnu, Fatih Harbiye, Muhteşem Yüzyıl: Kösem, Atiye',
+                    'Ödüller': 'Altın Kelebek, Antalya Televizyon Ödülü',
+                    'Boyu': '1.61 m'
+                }
+            },
+            'murat-boz': {
+                name: 'Murat Boz',
+                title: 'Şarkıcı, Söz Yazarı, Besteci',
+                image: '/api/placeholder/800/500',
+                bio: 'Murat Boz, 7 Mart 1980 tarihinde Zonguldak\'ın Ereğli ilçesinde doğdu. Türk pop müziğinin önde gelen isimlerinden biridir. Müzik kariyerine vokalist olarak başlamış, sonrasında 2006 yılında ilk albümü "Maximum"u çıkarmıştır. Aynı zamanda film ve televizyon projelerinde de yer almıştır.',
+                info: {
+                    'Doğum Tarihi': '7 Mart 1980',
+                    'Doğum Yeri': 'Karadeniz Ereğli, Zonguldak',
+                    'Meslek': 'Şarkıcı, Söz Yazarı, Besteci',
+                    'Eğitim': 'İstanbul Teknik Üniversitesi, Konservatuvar',
+                    'Albümler': 'Maximum, Şans, Aşklarım Büyük Benden, Janti',
+                    'Önemli Şarkıları': 'Kalamam Arkadaş, Geri Dönüş Olsa, Janti, Özledim',
+                    'Televizyon Programları': 'O Ses Türkiye (Jüri Üyesi)',
+                    'Filmler': 'Hadi İnşallah, Kardeşim Benim'
+                }
+            },
+            'hande-ercel': {
+                name: 'Hande Erçel',
+                title: 'Oyuncu, Model',
+                image: '/api/placeholder/800/500',
+                bio: 'Hande Erçel, 24 Kasım 1993 tarihinde Bandırma\'da doğdu. 2012 yılında Miss Civilization of the World yarışmasında ikinci olmuştur. "Güneşin Kızları", "Aşk Laftan Anlamaz" ve "Sen Çal Kapımı" gibi dizilerde rol almıştır. Uluslararası alanda tanınan Türk oyunculardan biridir.',
+                info: {
+                    'Doğum Tarihi': '24 Kasım 1993',
+                    'Doğum Yeri': 'Bandırma, Balıkesir',
+                    'Meslek': 'Oyuncu, Model',
+                    'Eğitim': 'Mimar Sinan Güzel Sanatlar Üniversitesi, Geleneksel Türk Sanatları Bölümü',
+                    'Önemli Projeler': 'Güneşin Kızları, Aşk Laftan Anlamaz, Sen Çal Kapımı',
+                    'Ödüller': 'Altın Kelebek, Pantene Altın Kelebek',
+                    'Boyu': '1.75 m',
+                    'Sosyal Medya': 'Instagram\'da en çok takip edilen Türk oyunculardan biri'
+                }
+            },
+            'acun-ilicali': {
+                name: 'Acun Ilıcalı',
+                title: 'Televizyon Yapımcısı, İş İnsanı',
+                image: '/api/placeholder/800/500',
+                bio: 'Acun Ilıcalı, 29 Mayıs 1969 tarihinde Edirne\'de doğdu. Türk medya dünyasının önde gelen isimlerinden biridir. Televizyon kariyerine spor muhabiri olarak başlamış, daha sonra kendi yapım şirketi Acun Medya\'yı kurmuştur. "Survivor", "O Ses Türkiye", "Yetenek Sizsiniz Türkiye" gibi birçok başarılı program formatını Türkiye\'ye getirmiştir. 2018 yılında TV8 kanalını satın almıştır.',
+                info: {
+                    'Doğum Tarihi': '29 Mayıs 1969',
+                    'Doğum Yeri': 'Edirne',
+                    'Meslek': 'Televizyon Yapımcısı, İş İnsanı',
+                    'Eğitim': 'İstanbul Üniversitesi, İngilizce Öğretmenliği (tamamlanmamış)',
+                    'Şirketleri': 'Acun Medya, TV8',
+                    'Önemli Projeleri': 'Survivor, O Ses Türkiye, Yetenek Sizsiniz Türkiye, Exatlon',
+                    'Çocukları': 'Banu, Leyla, Melisa, Yasemin Ilıcalı',
+                    'Eşi': 'Şeyma Subaşı (eski), Çağla Ilıcalı'
+                }
+            },
+            'serenay-sarikaya': {
+                name: 'Serenay Sarıkaya',
+                title: 'Oyuncu, Model',
+                image: '/api/placeholder/800/500',
+                bio: 'Serenay Sarıkaya, 1 Temmuz 1992 tarihinde Ankara\'da doğdu. 2010 yılında Miss Turkey yarışmasında birinci olmuştur. "Medcezir", "Fİ" ve "Şahmaran" gibi dizilerde rol almıştır. Birçok markaya modellik yapmış olan Sarıkaya, moda dünyasında da tanınan bir isimdir.',
+                info: {
+                    'Doğum Tarihi': '1 Temmuz 1992',
+                    'Doğum Yeri': 'Ankara',
+                    'Meslek': 'Oyuncu, Model',
+                    'Eğitim': 'Mersin Üniversitesi, Opera Bölümü (yarım kalmış)',
+                    'Önemli Projeler': 'Medcezir, Fİ, Şahmaran',
+                    'Ödüller': 'GQ Türkiye Men of the Year Ödülleri, Altın Kelebek',
+                    'Boyu': '1.78 m',
+                    'Modelling': 'Mavi Jeans, L\'Oréal Paris'
+                }
+            },
+            'can-yaman': {
+                name: 'Can Yaman',
+                title: 'Oyuncu, Avukat',
+                image: '/api/placeholder/800/500',
+                bio: 'Can Yaman, 8 Kasım 1989 tarihinde İstanbul\'da doğdu. Hukuk eğitimi almış ve bir süre avukat olarak çalışmıştır. "Erkenci Kuş", "Dolunay" ve "Bay Yanlış" gibi dizilerde rol almıştır. Özellikle İtalya\'da büyük bir hayran kitlesine sahip olan Yaman, uluslararası alanda tanınan Türk oyunculardan biridir.',
+                info: {
+                    'Doğum Tarihi': '8 Kasım 1989',
+                    'Doğum Yeri': 'İstanbul',
+                    'Meslek': 'Oyuncu, Avukat',
+                    'Eğitim': 'Yeditepe Üniversitesi, Hukuk Fakültesi',
+                    'Önemli Projeler': 'Erkenci Kuş, Dolunay, Bay Yanlış, El Turco',
+                    'Diller': 'Türkçe, İtalyanca, İngilizce, Almanca',
+                    'Ödüller': 'İtalya\'da E! People\'s Choice Award',
+                    'Boyu': '1.83 m'
+                }
+            }
+        };
+        
+        // Modal açma fonksiyonu
+        function openModal(celebrityId) {
+            const celebrity = celebrities[celebrityId];
+            if (!celebrity) return;
+            
+            document.getElementById('modal-image').src = celebrity.image;
+            document.getElementById('modal-image').alt = celebrity.name;
+            document.getElementById('modal-name').textContent = celebrity.name;
+            document.getElementById('modal-title').textContent = celebrity.title;
+            document.getElementById('modal-bio').textContent = celebrity.bio;
+            
+            // Ek bilgileri gösterme
+            const modalInfo = document.getElementById('modal-info');
+            modalInfo.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(celebrity.info)) {
+                const infoItem = document.createElement('div');
+                infoItem.className = 'info-item';
+                
+                const infoLabel = document.createElement('span');
+                infoLabel.className = 'info-label';
+                infoLabel.textContent = key;
+                
+                const infoValue = document.createElement('span');
+                infoValue.className = 'info-value';
+                infoValue.textContent = value;
+                
+                infoItem.appendChild(infoLabel);
+                infoItem.appendChild(infoValue);
+                modalInfo.appendChild(infoItem);
+            }
+            
+            document.getElementById('celebrity-modal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Sayfa kaydırmasını engelle
+        }
+        
+        // Modal kapatma fonksiyonu
+        function closeModal() {
+            document.getElementById('celebrity-modal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Sayfa kaydırmasını tekrar etkinleştir
+        }
+        
+        // Modal dışına tıklayınca kapatma
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('celebrity-modal')) {
+                closeModal();
+            }
+        }
+
+        // Form gönderimi ve modal açma
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Form verilerini al
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const favCelebrity = document.getElementById('favCelebrity').value;
+            
+            // Cinsiyet değerini al
+            let gender = '';
+            const genderInputs = document.querySelectorAll('input[name="gender"]');
+            for (const input of genderInputs) {
+                if (input.checked) {
+                    gender = input.value;
+                    break;
+                }
+            }
+            
+            // Sonuçları göster
+            const formResults = document.getElementById('form-results');
+            formResults.innerHTML = `
+                <div class="result-item">
+                    <span class="result-label">Ad:</span> ${firstName}
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Soyad:</span> ${lastName}
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Cinsiyet:</span> ${gender}
+                </div>
+                <div class="result-item">
+                    <span class="result-label">E-posta:</span> ${email}
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Favori Türk Sanatçısı:</span> ${favCelebrity}
+                </div>
+            `;
+            
+            // Modalı aç
+            document.getElementById('form-result-modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+    }
+});
+
+// Form modalını kapatma fonksiyonu
+function closeFormModal() {
+    document.getElementById('form-result-modal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Form modalı dışına tıklayınca kapatma
+window.onclick = function(event) {
+    const formModal = document.getElementById('form-result-modal');
+    const celebrityModal = document.getElementById('celebrity-modal');
+    
+    if (event.target == formModal) {
+        closeFormModal();
+    }
+    if (event.target == celebrityModal) {
+        closeModal();
+    }
+}
+
+    </script>
+</body>
+</html>
